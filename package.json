@@ -5,7 +5,8 @@
   "type": "module",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "fastify start -l info app.js -p 3111",
+    "dev": "fastify start -w -l info -P app.js -p 3111"
   },
   "repository": {
     "type": "git",
