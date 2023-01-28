@@ -1,0 +1,13 @@
+{
+  "env": {
+    "es2022": true,
+    "node": true
+  },
+  "extends": ["standard"],
+  "parserOptions": {
+    "ecmaVersion": 13,
+    "sourceType": "module"
+  },
+  "rules": { "object-shorthand": 0 }
+
+}
