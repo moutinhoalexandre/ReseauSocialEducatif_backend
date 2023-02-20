@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model classRoom {
+  id            Int               @id @default(autoincrement()) @db.UnsignedInt
+  display_name  String            @unique @db.VarChar(255)
+  date_creation DateTime          @default(now()) @db.DateTime(0)
+  date_update   DateTime          @default(now()) @db.DateTime(0)
+  user          userOnClassRoom[]
+}
+
+model user {
+  id                Int               @id @default(autoincrement()) @db.UnsignedInt
+  display_name      String            @unique @db.VarChar(255)
+  email             String            @unique @db.VarChar(255)
+  password          String            @db.VarChar(255)
+  profile_image_url String?           @db.VarChar(510)
+  role              user_role         @default(user)
+  date_creation     DateTime          @default(now()) @db.DateTime(0)
+  date_update       DateTime          @default(now()) @db.DateTime(0)
+  classRoom         userOnClassRoom[]
+}
+
+model userOnClassRoom {
+  id          Int           @id @default(autoincrement()) @db.UnsignedInt
+  user        user          @relation(fields: [userId], references: [id])
+  userId      Int           @db.UnsignedInt
+  classroom   classRoom     @relation(fields: [classroomId], references: [id])
+  classroomId Int           @db.UnsignedInt
+  assignedAt  DateTime      @default(now())
+  publication publication[]
+  comment     comment[]
+}
+
+model publication {
+  id                 Int             @id @default(autoincrement()) @db.UnsignedInt
+  title              String?         @db.VarChar(255)
+  image_url          String          @db.VarChar(510)
+  userOnClassroom_Id Int             @db.UnsignedInt
+  date_creation      DateTime        @default(now()) @db.DateTime(0)
+  date_update        DateTime        @default(now()) @db.DateTime(0)
+  userOnClassRoom    userOnClassRoom @relation(fields: [userOnClassroom_Id], references: [id])
+  comment            comment[]
+
+  @@index([userOnClassroom_Id], name: "FK_AUTHORID")
+}
+
+model comment {
+  id                 Int             @id @default(autoincrement()) @db.UnsignedInt
+  content            String          @db.VarChar(510)
+  publication_id     Int             @db.UnsignedInt
+  userOnClassroom_Id Int             @db.UnsignedInt
+  date_creation      DateTime        @default(now()) @db.DateTime(0)
+  date_update        DateTime        @default(now()) @db.DateTime(0)
+  userOnClassRoom    userOnClassRoom @relation(fields: [userOnClassroom_Id], references: [id])
+  publication        publication     @relation(fields: [publication_id], references: [id])
+
+  @@index([publication_id], name: "FK1_PUBLICATIONID")
+  @@index([userOnClassroom_Id], name: "FK2_AUTHORID")
+}
+
+enum user_role {
+  admin
+  user
+}
