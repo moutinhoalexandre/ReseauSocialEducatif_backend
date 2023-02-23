@@ -7,7 +7,7 @@ export default async function (fastify) {
     handler: handler
   })
 
-  async function handler (request, reply) {
+  async function handler (request) {
     const requestUserId = request.params.userId
 
     const user = await fastify.prisma.user.findUnique({
@@ -50,7 +50,7 @@ const params = {
   properties: {
     userId: {
       type: 'number',
-      description: 'user id'
+      description: 'Enter user id'
     }
   }
 }
