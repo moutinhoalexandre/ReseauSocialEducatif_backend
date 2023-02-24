@@ -36,8 +36,8 @@ export default async function (fastify) {
         path: '/',
         secure: true,
         httpOnly: true,
-        sameSite: true
-        // expiresIn: '1h'
+        sameSite: true,
+        expiresIn: '1h'
       })
       .setCookie('connectedUser', JSON.stringify(returnedUser), {
         domain: 'localhost',
