@@ -3,7 +3,7 @@ export default async function (fastify) {
     method: 'GET',
     url: '/users',
     schema: schema,
-    // preValidation: [fastify.authenticate],
+    preValidation: [fastify.authenticate],
     handler: handler
   })
 

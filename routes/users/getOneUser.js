@@ -3,7 +3,7 @@ export default async function (fastify) {
     method: 'GET',
     url: '/users/:userId',
     schema: schema,
-    // preValidation: [fastify.authenticate],
+    preValidation: [fastify.authenticate],
     handler: handler
   })
 
@@ -16,7 +16,7 @@ export default async function (fastify) {
       }
     })
 
-    if (!user) throw fastify.httpErrors.notfound('User not found')
+    if (!user) throw fastify.httpErrors.notFound('User not found')
 
     return {
       id: user.id,

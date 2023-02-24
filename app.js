@@ -12,7 +12,8 @@ import fastifybcrypt from 'fastify-bcrypt'
 export default async function (fastify, opts) {
   // Place here your custom code!
   fastify.register(fastifyCors, {
-    origin: true
+    origin: true,
+    credentials: true
   })
 
   fastify.register(fastifyHelmet, { global: true })
@@ -91,8 +92,7 @@ export default async function (fastify, opts) {
     transformSpecification: (swaggerObject, req, reply) => {
       swaggerObject.host = req.hostname
       return swaggerObject
-    },
-    transformSpecificationClone: true
+    }
   })
 
   // Do not touch the following lines
