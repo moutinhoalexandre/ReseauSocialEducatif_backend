@@ -1,23 +1,23 @@
 export default async function (fastify) {
   fastify.route({
     method: 'GET',
-    url: '/users',
+    url: '/classRooms',
     schema: schema,
-    preValidation: [fastify.authenticate],
+    // preValidation: [fastify.authenticate],
     handler: handler
   })
 
   async function handler () {
-    const users = await fastify.prisma.user.findMany()
+    const classRoom = await fastify.prisma.classRoom.findMany()
 
-    return users
+    return classRoom
   }
 }
 
 const documentation = {
-  tags: ['Users'],
-  summary: 'Get all users',
-  description: 'Get all users'
+  tags: ['ClassRooms'],
+  summary: 'Get all classRooms',
+  description: 'Get all classRooms'
 }
 
 const response = {

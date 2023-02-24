@@ -57,8 +57,8 @@ export default async function (fastify, opts) {
       tags: [
         { name: 'Authentification', description: 'Authentification endpoints' },
         { name: 'Users', description: 'Users CRUD' },
-        { name: 'ClassRoom', description: 'ClassRoom CRUD' },
-        { name: 'UserOnClassRoom', description: 'UserOnClassRoom CRUD' },
+        { name: 'ClassRooms', description: 'ClassRooms CRUD' },
+        { name: 'UserOnClassRooms', description: 'UserOnClassRooms CRUD' },
         { name: 'Publications', description: 'Publications CRUD' },
         { name: 'Comments', description: 'Comments CRUD' }
       ],
