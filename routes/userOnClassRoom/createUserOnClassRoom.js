@@ -1,44 +1,48 @@
 export default async function (fastify) {
   fastify.route({
     method: 'POST',
-    url: '/classRoom',
+    url: '/userOnClassRoom',
     schema: schema,
     handler: handler
   })
 
   async function handler (request, reply) {
-    const { display_name: displayName } = request.body
+    const { userId, classroomId } = request.body
+    console.log(userId)
+    console.log(classroomId)
 
-    const classRoom = await fastify.prisma.classRoom.findUnique({
+    const classRoom = await fastify.prisma.userOnClassRoom.findMany({
       where: {
-        display_name: displayName
+        userId: userId,
+        classroomId: classroomId
       }
     })
 
-    if (classRoom) throw fastify.httpErrors.conflict('ClassRoom already exists')
+    if (classRoom.length > 0) throw fastify.httpErrors.conflict('UserOnClassRoom already exists')
 
-    fastify.prisma.classRoom.create({
+    await fastify.prisma.userOnClassRoom.create({
       data: {
-        display_name: displayName
+        userId: userId,
+        classroomId: classroomId
       }
+
     })
 
-    return { message: 'classRoom successfully created' }
+    return { message: 'UserOnClassRoom successfully created' }
   }
 }
 
 const documentation = {
-  tags: ['ClassRooms'],
-  summary: 'Create one classRoom',
-  description: 'Create one classRoom'
+  tags: ['UserOnClassRooms'],
+  summary: 'Create one userOnclassRoom',
+  description: 'Create one userOnclassRoom'
 }
 
 const body = {
   type: 'object',
   properties: {
-    email: { type: 'string' },
-    display_name: { type: 'string' },
-    password: { type: 'string' }
+    userId: { type: 'number' },
+    classroomId: { type: 'number' }
   }
 }
 

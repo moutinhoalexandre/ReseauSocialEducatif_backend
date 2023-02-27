@@ -9,6 +9,14 @@ export default async function (fastify) {
   async function handler (request, reply) {
     const { email, display_name: displayName, password } = request.body
 
+    const user = await fastify.prisma.user.findUnique({
+      where: {
+        email: email
+      }
+    })
+
+    if (user) throw fastify.httpErrors.conflict('User already exists')
+
     const hash = await fastify.bcrypt.hash(password)
 
     const newUser = await fastify.prisma.user.create({
@@ -64,6 +72,15 @@ const response = {
       email: { type: 'string' },
       role: { type: 'string' },
       profileImageUrl: { type: 'string' }
+    },
+    409: {
+      type: 'object',
+      description: 'Conflict Message',
+      properties: {
+        statusCode: { type: 'string' },
+        error: { type: 'string' },
+        message: { type: 'string' }
+      }
     }
   }
 }

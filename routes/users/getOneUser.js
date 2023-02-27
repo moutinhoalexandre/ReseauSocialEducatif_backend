@@ -9,7 +9,6 @@ export default async function (fastify) {
 
   async function handler (request) {
     const requestUserId = request.params.userId
-    if (!requestUserId) throw fastify.httpErrors.forbidden('Please enter User Id')
     const user = await fastify.prisma.user.findUnique({
       where: {
         id: requestUserId
@@ -41,6 +40,15 @@ const response = {
       display_name: { type: 'string' },
       email: { type: 'string' },
       profile_image_url: { type: 'string' }
+    }
+  },
+  404: {
+    type: 'object',
+    description: 'Not Found Message',
+    properties: {
+      statusCode: { type: 'string' },
+      error: { type: 'string' },
+      message: { type: 'string' }
     }
   }
 }

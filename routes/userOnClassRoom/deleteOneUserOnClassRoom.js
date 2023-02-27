@@ -1,29 +1,29 @@
 export default async function (fastify) {
   fastify.route({
     method: 'DELETE',
-    url: '/classRooms/:classroomId',
+    url: '/userOnClassRoom/:useronclassroomId',
     schema: schema,
     // preValidation: [fastify.authenticate],
     handler: handler
   })
 
   async function handler (request) {
-    const requestClassRoomId = request.params.classroomId
+    const requestUserOnClassRoomId = request.params.useronclassroomId
 
     const { role } = fastify.jwt.decode(request.cookies.token)
 
     if (role === 'admin') {
-      const classRoom = await fastify.prisma.classRoom.findUnique({
+      const classRoom = await fastify.prisma.userOnClassRoom.findUnique({
         where: {
-          id: requestClassRoomId
+          id: requestUserOnClassRoomId
         }
       })
 
-      if (!classRoom) throw fastify.httpErrors.notFound('ClassRoom not found')
+      if (!classRoom) throw fastify.httpErrors.notFound('UserOnClassRoom not found')
 
       await fastify.prisma.classRoom.delete({
         where: {
-          id: requestClassRoomId
+          id: requestUserOnClassRoomId
         }
       })
 
@@ -35,9 +35,9 @@ export default async function (fastify) {
 }
 
 const documentation = {
-  tags: ['ClassRooms'],
-  summary: 'Delete one classRoom',
-  description: 'Delete one classRoom'
+  tags: ['UserOnClassRooms'],
+  summary: 'Delete one UserOnClassRoom',
+  description: 'Delete one UserOnClassRoom'
 }
 
 const response = {
@@ -62,7 +62,7 @@ const response = {
 const params = {
   type: 'object',
   properties: {
-    classroomId: {
+    useronclassroomId: {
       type: 'number',
       description: 'Enter user id'
     }

@@ -20,13 +20,11 @@ export default async function (fastify) {
 
       if (!user) throw fastify.httpErrors.notFound('User not found')
 
-      const deleteUser = fastify.prisma.user.delete({
+      await fastify.prisma.user.delete({
         where: {
           id: requestUserId
         }
       })
-
-      await fastify.prisma.$transaction([deleteUser])
 
       return { message: 'User successfully deleted' }
     } else {

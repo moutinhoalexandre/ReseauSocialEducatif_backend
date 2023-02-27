@@ -10,20 +10,15 @@ export default async function (fastify) {
   async function handler (request) {
     const requestClassRoomId = request.params.classroomId
 
-    if (requestClassRoomId === ':classroomId') throw fastify.httpErrors.forbidden('Please enter classRoom Id')
-
     const classRoom = await fastify.prisma.classRoom.findUnique({
       where: {
-        id: Number(requestClassRoomId)
+        id: requestClassRoomId
       }
     })
 
-    if (!classRoom) throw fastify.httpErrors.notFound('User not found')
+    if (!classRoom) throw fastify.httpErrors.notFound('ClassRoom not found')
 
-    return {
-      id: classRoom.id,
-      display_name: classRoom.display_name
-    }
+    return classRoom
   }
 }
 
@@ -36,23 +31,16 @@ const documentation = {
 const response = {
   200: {
     type: 'object',
-    description: 'Success Message',
     properties: {
-      message: { type: 'string' }
+      id: { type: 'number' },
+      display_name: { type: 'string' },
+      date_creation: { type: 'string' },
+      date_update: { type: 'string' }
     }
   },
-  401: {
+  404: {
     type: 'object',
-    description: 'Unauthorized Message',
-    properties: {
-      statusCode: { type: 'string' },
-      error: { type: 'string' },
-      message: { type: 'string' }
-    }
-  },
-  403: {
-    type: 'object',
-    description: 'Forbidden Message',
+    description: 'Not Found Message',
     properties: {
       statusCode: { type: 'string' },
       error: { type: 'string' },
@@ -64,9 +52,9 @@ const response = {
 const params = {
   type: 'object',
   properties: {
-    userId: {
+    classroomId: {
       type: 'number',
-      description: 'Enter user id'
+      description: 'Enter classRoom id'
     }
   }
 }

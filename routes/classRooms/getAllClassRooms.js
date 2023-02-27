@@ -23,14 +23,11 @@ const documentation = {
 const response = {
   200: {
     type: 'array',
-    items: {
-      type: 'object',
-      properties: {
-        id: { type: 'number' },
-        display_name: { type: 'string' },
-        email: { type: 'string' },
-        profile_image_url: { type: 'string' }
-      }
+    properties: {
+      id: { type: 'number' },
+      display_name: { type: 'string' },
+      date_creation: { type: 'string' },
+      date_update: { type: 'string' }
     }
   }
 }

@@ -15,7 +15,7 @@ model classRoom {
   display_name  String            @unique @db.VarChar(255)
   date_creation DateTime          @default(now()) @db.DateTime(0)
   date_update   DateTime          @default(now()) @db.DateTime(0)
-  user          userOnClassRoom[]
+  users          userOnClassRoom[]
 }
 
 model user {
@@ -27,14 +27,14 @@ model user {
   role              user_role         @default(user)
   date_creation     DateTime          @default(now()) @db.DateTime(0)
   date_update       DateTime          @default(now()) @db.DateTime(0)
-  classRoom         userOnClassRoom[]
+  classRooms         userOnClassRoom[]
 }
 
 model userOnClassRoom {
   id          Int           @id @default(autoincrement()) @db.UnsignedInt
-  user        user          @relation(fields: [userId], references: [id])
+  user        user          @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId      Int           @db.UnsignedInt
-  classroom   classRoom     @relation(fields: [classroomId], references: [id])
+  classroom   classRoom     @relation(fields: [classroomId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   classroomId Int           @db.UnsignedInt
   assignedAt  DateTime      @default(now())
   publication publication[]
@@ -48,7 +48,7 @@ model publication {
   userOnClassroom_Id Int             @db.UnsignedInt
   date_creation      DateTime        @default(now()) @db.DateTime(0)
   date_update        DateTime        @default(now()) @db.DateTime(0)
-  userOnClassRoom    userOnClassRoom @relation(fields: [userOnClassroom_Id], references: [id])
+  userOnClassRoom    userOnClassRoom @relation(fields: [userOnClassroom_Id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   comment            comment[]
 
   @@index([userOnClassroom_Id], name: "FK_AUTHORID")
@@ -61,8 +61,8 @@ model comment {
   userOnClassroom_Id Int             @db.UnsignedInt
   date_creation      DateTime        @default(now()) @db.DateTime(0)
   date_update        DateTime        @default(now()) @db.DateTime(0)
-  userOnClassRoom    userOnClassRoom @relation(fields: [userOnClassroom_Id], references: [id])
-  publication        publication     @relation(fields: [publication_id], references: [id])
+  userOnClassRoom    userOnClassRoom @relation(fields: [userOnClassroom_Id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  publication        publication     @relation(fields: [publication_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@index([publication_id], name: "FK1_PUBLICATIONID")
   @@index([userOnClassroom_Id], name: "FK2_AUTHORID")
