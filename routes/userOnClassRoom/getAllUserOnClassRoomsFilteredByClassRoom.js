@@ -3,7 +3,7 @@ export default async function (fastify) {
     method: 'GET',
     url: '/userOnClassRooms/classRoom/:classroomId',
     schema: schema,
-    // preValidation: [fastify.authenticate],
+    preValidation: [fastify.authenticate],
     handler: handler
   })
 
@@ -34,7 +34,7 @@ export default async function (fastify) {
     if (userOnClassRoom.length > 0) {
       return userOnClassRoom
     } else {
-      throw fastify.httpErrors.notFound('ClassRoom not found')
+      throw fastify.httpErrors.notFound('UserOnClassRoom not found')
     }
   }
 }

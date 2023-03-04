@@ -8,6 +8,7 @@ import fastifySwaggerUi from '@fastify/swagger-ui'
 import fastifyEnv from '@fastify/env'
 import fastifyHelmet from '@fastify/helmet'
 import fastifybcrypt from 'fastify-bcrypt'
+import multipart from '@fastify/multipart'
 
 export default async function (fastify, opts) {
   // Place here your custom code!
@@ -42,6 +43,8 @@ export default async function (fastify, opts) {
     confKey: 'config'
   })
 
+  fastify.register(multipart)
+
   fastify.register(fastifySwagger, {
     swagger: {
       info: {
@@ -50,7 +53,7 @@ export default async function (fastify, opts) {
           'Documentation pour l\'API du Réseau Social Educatif créer par Alexandre MOUTINHO',
         version: '0.1.0'
       },
-      host: 'http://127.0.0.1:3111',
+      host: 'localhost::3111',
       schemes: ['http'],
       consumes: ['application/json'],
       produces: ['application/json'],
@@ -64,6 +67,7 @@ export default async function (fastify, opts) {
       ],
       securityDefinitions: {
         apiKey: {
+          description: 'Cookie necessary to use API calls',
           type: 'apiKey',
           name: 'token',
           in: 'cookie'
@@ -77,7 +81,8 @@ export default async function (fastify, opts) {
     routePrefix: '/documentation',
     uiConfig: {
       docExpansion: 'list',
-      deepLinking: false
+      deepLinking: false,
+      persistAuthorization: true
     },
     uiHooks: {
       onRequest: function (request, reply, next) {

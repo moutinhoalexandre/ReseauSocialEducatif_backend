@@ -1,9 +1,9 @@
-export default async function (fastify) {
+export default async function (fastify, reply) {
   fastify.route({
     method: 'GET',
     url: '/userOnClassRooms/user/:userId',
     schema: schema,
-    // preValidation: [fastify.authenticate],
+    preValidation: [fastify.authenticate],
     handler: handler
   })
 

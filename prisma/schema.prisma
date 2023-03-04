@@ -15,7 +15,7 @@ model classRoom {
   display_name  String            @unique @db.VarChar(255)
   date_creation DateTime          @default(now()) @db.DateTime(0)
   date_update   DateTime          @default(now()) @db.DateTime(0)
-  users          userOnClassRoom[]
+  users         userOnClassRoom[]
 }
 
 model user {
@@ -27,7 +27,7 @@ model user {
   role              user_role         @default(user)
   date_creation     DateTime          @default(now()) @db.DateTime(0)
   date_update       DateTime          @default(now()) @db.DateTime(0)
-  classRooms         userOnClassRoom[]
+  classRooms        userOnClassRoom[]
 }
 
 model userOnClassRoom {
@@ -43,8 +43,9 @@ model userOnClassRoom {
 
 model publication {
   id                 Int             @id @default(autoincrement()) @db.UnsignedInt
-  title              String?         @db.VarChar(255)
-  image_url          String          @db.VarChar(510)
+  title              String          @db.VarChar(255)
+  content            String?
+  image_url          String?          @db.VarChar(510)
   userOnClassroom_Id Int             @db.UnsignedInt
   date_creation      DateTime        @default(now()) @db.DateTime(0)
   date_update        DateTime        @default(now()) @db.DateTime(0)

@@ -3,7 +3,7 @@ export default async function (fastify) {
     method: 'DELETE',
     url: '/userOnClassRoom/:useronclassroomId',
     schema: schema,
-    // preValidation: [fastify.authenticate],
+    preValidation: [fastify.authenticate],
     handler: handler
   })
 
