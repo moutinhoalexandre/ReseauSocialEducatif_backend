@@ -45,7 +45,7 @@ model publication {
   id                 Int             @id @default(autoincrement()) @db.UnsignedInt
   title              String          @db.VarChar(255)
   content            String?
-  image_url          String?          @db.VarChar(510)
+  image_url          String?         @db.VarChar(510)
   userOnClassroom_Id Int             @db.UnsignedInt
   date_creation      DateTime        @default(now()) @db.DateTime(0)
   date_update        DateTime        @default(now()) @db.DateTime(0)

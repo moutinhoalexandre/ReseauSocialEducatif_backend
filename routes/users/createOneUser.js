@@ -1,3 +1,8 @@
+import fs from 'fs'
+import util from 'util'
+import { pipeline } from 'stream'
+const pump = util.promisify(pipeline)
+
 export default async function (fastify) {
   fastify.route({
     method: 'POST',
@@ -7,7 +12,37 @@ export default async function (fastify) {
   })
 
   async function handler (request, reply) {
-    const { email, display_name: displayName, password } = request.body
+    const parts = request.parts()
+
+    /* Declaring variables. */
+    let email = ''
+    let password = ''
+    let displayName = ''
+    let userImageUrl = ''
+    const image = {}
+
+    /* A for loop that is iterating over the parts of the request. */
+    for await (const part of parts) {
+      if (part.fieldname === 'email') {
+        email = part.value
+      } else if (part.fieldname === 'password') {
+        password = part.value
+      } else if (part.fieldname === 'displayName') {
+        displayName = part.value
+      } else /* This is checking if the part of the request is an image. If it is, it is saving theimage to the public/images folder. */
+      if (part.fieldname === 'image') {
+        image.filename = part.filename
+        image.mimetype = part.mimetype
+        const uniqueFilename = `${new Date().getTime()}-${image.filename}`
+        const saveTo = `./public/images/${uniqueFilename}`
+        userImageUrl = `/images/${uniqueFilename}`
+        await pump(part.file, fs.createWriteStream(saveTo))
+      }
+    }
+
+    if (!image.filename) {
+      userImageUrl = '/public/images/avatar.jpg'
+    }
 
     const user = await fastify.prisma.user.findUnique({
       where: {
@@ -23,7 +58,8 @@ export default async function (fastify) {
       data: {
         email: email,
         display_name: displayName,
-        password: hash
+        password: hash,
+        profile_image_url: userImageUrl
       }
     })
 
@@ -54,24 +90,15 @@ const documentation = {
   description: 'Create one user'
 }
 
-const body = {
-  type: 'object',
-  properties: {
-    email: { type: 'string' },
-    display_name: { type: 'string' },
-    password: { type: 'string' }
-  }
-}
-
 const response = {
   200: {
     type: 'object',
     properties: {
       id: { type: 'number' },
-      displayName: { type: 'string' },
+      display_name: { type: 'string' },
       email: { type: 'string' },
       role: { type: 'string' },
-      profileImageUrl: { type: 'string' }
+      profile_image_url: { type: 'string' }
     },
     409: {
       type: 'object',
@@ -85,4 +112,4 @@ const response = {
   }
 }
 
-const schema = { ...documentation, response, body }
+const schema = { ...documentation, response }

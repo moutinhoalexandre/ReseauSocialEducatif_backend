@@ -9,6 +9,7 @@ import fastifyEnv from '@fastify/env'
 import fastifyHelmet from '@fastify/helmet'
 import fastifybcrypt from 'fastify-bcrypt'
 import multipart from '@fastify/multipart'
+import fastifyStatic from '@fastify/static'
 
 export default async function (fastify, opts) {
   // Place here your custom code!
@@ -55,7 +56,7 @@ export default async function (fastify, opts) {
       },
       host: 'localhost::3111',
       schemes: ['http'],
-      consumes: ['application/json'],
+      consumes: ['application/json', 'multipart/form-data'],
       produces: ['application/json'],
       tags: [
         { name: 'Authentification', description: 'Authentification endpoints' },
@@ -117,5 +118,10 @@ export default async function (fastify, opts) {
     dir: path.join(__dirname, 'routes'),
     dirNameRoutePrefix: false,
     options: Object.assign({}, opts)
+  })
+
+  fastify.register(fastifyStatic, {
+    root: path.join(__dirname, 'public', 'images'),
+    prefix: '/images/' // préfixe optionnel pour les URL servies
   })
 }
