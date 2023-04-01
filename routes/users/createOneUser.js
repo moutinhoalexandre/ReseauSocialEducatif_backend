@@ -1,6 +1,7 @@
 import fs from 'fs'
 import util from 'util'
 import { pipeline } from 'stream'
+import passwordValidator from 'password-validator'
 const pump = util.promisify(pipeline)
 
 export default async function (fastify) {
@@ -44,6 +45,8 @@ export default async function (fastify) {
       userImageUrl = '/public/images/avatar.jpg'
     }
 
+    if (!email || !password) throw fastify.httpErrors.badRequest('Any data to update')
+
     const user = await fastify.prisma.user.findUnique({
       where: {
         email: email
@@ -51,6 +54,18 @@ export default async function (fastify) {
     })
 
     if (user) throw fastify.httpErrors.conflict('User already exists')
+
+    // eslint-disable-next-line new-cap
+    const schema = new passwordValidator()
+    schema
+      .is().min(8) // min 8 caractères
+      .has().digits(1) // min 1 chiffre
+      .has().uppercase(1) // min 1 caractère majuscule
+      .has().lowercase(1) // min 1 caractère minuscule
+      .has().symbols(1) // min 1 symbole
+      .has().not().spaces() // ne doit pas contenir d'espace
+
+    if (!schema.validate(password)) throw fastify.httpErrors.badRequest("Mot de passe pas assez sécurisé, il doit contenir au moins 8 caractères, un chiffre, une majuscule, une minuscule, un symbole et ne pas contenir d'espace !")
 
     const hash = await fastify.bcrypt.hash(password)
 
