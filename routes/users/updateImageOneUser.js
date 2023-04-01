@@ -25,12 +25,16 @@ export default async function (fastify) {
 
     if (!user) throw fastify.httpErrors.notFound('User not found')
 
+    const now = Date.now()
+    const updateDate = new Date(now)
+
     const userFind = await fastify.prisma.user.update({
       where: {
         id: requestUserId
       },
       data: {
-        profile_image_url: imageUrl
+        profile_image_url: imageUrl,
+        date_update: updateDate
       }
     })
 
