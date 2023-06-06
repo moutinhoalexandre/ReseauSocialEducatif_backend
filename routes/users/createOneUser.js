@@ -36,13 +36,13 @@ export default async function (fastify) {
         image.mimetype = part.mimetype
         const uniqueFilename = `${new Date().getTime()}-${image.filename}`
         const saveTo = `./public/images/${uniqueFilename}`
-        userImageUrl = `/images/${uniqueFilename}`
+        userImageUrl = `http://localhost:3111/images/${uniqueFilename}`
         await pump(part.file, fs.createWriteStream(saveTo))
       }
     }
 
     if (!image.filename) {
-      userImageUrl = '/public/images/avatar.jpg'
+      userImageUrl = 'http://localhost:3111/images/avatar.jpg'
     }
 
     if (!email || !password) throw fastify.httpErrors.badRequest('Any data to update')

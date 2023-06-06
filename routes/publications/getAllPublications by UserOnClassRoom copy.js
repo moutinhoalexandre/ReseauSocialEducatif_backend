@@ -8,10 +8,10 @@ export default async function (fastify) {
   })
 
   async function handler (request) {
-    const requestuserOnclassRoomId = request.params.useronclassroomId
+    const requestUserOnclassRoomId = request.params.useronclassroomId
     const allPublication = await fastify.prisma.publication.findMany({
       where: {
-        userOnClassroom_Id: requestuserOnclassRoomId
+        userOnClassroom_Id: requestUserOnclassRoomId
       },
       orderBy: [
         { id: 'desc' }

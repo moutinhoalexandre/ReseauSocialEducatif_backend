@@ -11,14 +11,14 @@ export default async function (fastify) {
 
   async function handler (request, reply) {
     const requestUserId = Number(request.params.userId)
-    const { role, id } = fastify.jwt.decode(request.cookies.token)
+    const { role, userId } = fastify.jwt.decode(request.cookies.token)
 
-    if (role === 'admin' || id === requestUserId) {
+    if (role === 'admin' || userId === requestUserId) {
       const { filename, file } = await request.file()
       const uniqueFilename = `${new Date().getTime()}-${filename}`
       const saveTo = `./public/images/${uniqueFilename}`
       await file.pipe(fs.createWriteStream(saveTo))
-      const imageUrl = `/images/${uniqueFilename}`
+      const imageUrl = `http://localhost:3111/images/${uniqueFilename}`
 
       const user = await fastify.prisma.user.findUnique({
         where: {
@@ -41,9 +41,45 @@ export default async function (fastify) {
         }
       })
 
-      return userFind
+      const token = await reply.jwtSign({
+        role: userFind.role,
+        userId: userFind.id
+      })
+
+      const returnedUser = {
+        id: userFind.id,
+        displayName: userFind.display_name,
+        email: userFind.email,
+        role: userFind.role,
+        profileImageUrl: userFind.profile_image_url
+      }
+
+      const displayNameUser = {
+        displayName: userFind.display_name
+      }
+
+      reply
+        .setCookie('token', token, {
+          domain: 'localhost',
+          path: '/',
+          secure: true,
+          httpOnly: true,
+          sameSite: true
+        })
+        .setCookie('connectedUser', JSON.stringify(returnedUser), {
+          domain: 'localhost',
+          path: '/',
+          secure: true,
+          httpOnly: false,
+          sameSite: true,
+          maxAge: 60 * 60 * 24
+        })
+        .code(200)
+        .send(displayNameUser)
     } else {
-      throw fastify.httpErrors.unauthorized('You are not authorized to update this User')
+      throw fastify.httpErrors.unauthorized(
+        'You are not authorized to update this User'
+      )
     }
   }
 }

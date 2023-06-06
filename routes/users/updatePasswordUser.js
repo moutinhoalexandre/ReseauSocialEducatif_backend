@@ -2,7 +2,7 @@ import passwordValidator from 'password-validator'
 
 export default async function (fastify) {
   fastify.route({
-    method: 'POST',
+    method: 'PUT',
     url: '/user/password/:userId',
     schema: schema,
     preValidation: [fastify.authenticate],
@@ -11,6 +11,7 @@ export default async function (fastify) {
 
   async function handler (request, reply) {
     const requestUserId = Number(request.params.userId)
+    console.log(requestUserId)
     const { role, id } = fastify.jwt.decode(request.cookies.token)
     const { newPassword, oldPassword } = request.body
 
@@ -27,8 +28,12 @@ export default async function (fastify) {
       })
 
       if (!user) throw fastify.httpErrors.notFound('User not found')
+      const passwordCheck = await fastify.bcrypt.compare(
+        oldPassword,
+        user.password
+      )
 
-      if (user.password !== oldPassword) throw fastify.httpErrors.unauthorized('You are not authorized to update this User password')
+      if (!passwordCheck) { throw fastify.httpErrors.unauthorized('Incorrect password') }
 
       // eslint-disable-next-line new-cap
       const schema = new passwordValidator()
@@ -42,12 +47,13 @@ export default async function (fastify) {
 
       if (!schema.validate(newPassword)) throw fastify.httpErrors.badRequest("Mot de passe pas assez sécurisé, il doit contenir au moins 8 caractères, un chiffre, une majuscule, une minuscule, un symbole et ne pas contenir d'espace !")
 
+      const hash = await fastify.bcrypt.hash(newPassword)
       await fastify.prisma.user.update({
         where: {
           id: requestUserId
         },
         data: {
-          password: newPassword,
+          password: hash,
           date_update: updateDate
         }
       })

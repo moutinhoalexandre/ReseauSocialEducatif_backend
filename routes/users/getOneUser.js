@@ -21,7 +21,8 @@ export default async function (fastify) {
       id: user.id,
       display_name: user.display_name,
       email: user.email,
-      profile_image_url: user.profile_image_url
+      profileImageUrl: user.profile_image_url,
+      role: user.role
     }
   }
 }
@@ -39,7 +40,8 @@ const response = {
       id: { type: 'number' },
       display_name: { type: 'string' },
       email: { type: 'string' },
-      profile_image_url: { type: 'string' }
+      profileImageUrl: { type: 'string' },
+      role: { type: 'string' }
     }
   },
   404: {

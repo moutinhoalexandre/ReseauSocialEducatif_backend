@@ -18,7 +18,10 @@ export default async function (fastify, opts) {
     credentials: true
   })
 
-  fastify.register(fastifyHelmet, { global: true })
+  fastify.register(fastifyHelmet, {
+    global: true,
+    crossOriginEmbedderPolicy: false
+  })
 
   fastify.register(fastifyCookie)
 

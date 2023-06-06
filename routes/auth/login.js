@@ -15,7 +15,7 @@ export default async function (fastify) {
       }
     })
 
-    if (!user) throw fastify.httpErrors.unauthorized('User not found')
+    if (!user) throw fastify.httpErrors.notFound('User not found')
 
     const token = await reply.jwtSign({ role: user.role, userId: user.id })
     const passwordCheck = await fastify.bcrypt.compare(password, user.password)
@@ -30,6 +30,10 @@ export default async function (fastify) {
       profileImageUrl: user.profile_image_url
     }
 
+    const displayNameUser = {
+      displayName: user.display_name
+    }
+
     reply
       .setCookie('token', token, {
         domain: 'localhost',
@@ -37,17 +41,18 @@ export default async function (fastify) {
         secure: true,
         httpOnly: true,
         sameSite: true,
-        expiresIn: '1h'
+        maxAge: 60 * 60 * 24
       })
       .setCookie('connectedUser', JSON.stringify(returnedUser), {
         domain: 'localhost',
         path: '/',
         secure: true,
         httpOnly: false,
-        sameSite: true
+        sameSite: true,
+        maxAge: 60 * 60 * 24
       })
       .code(200)
-      .send(returnedUser)
+      .send(displayNameUser)
   }
 }
 
