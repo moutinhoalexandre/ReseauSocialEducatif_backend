@@ -7,8 +7,7 @@ export default async function (fastify) {
   })
 
   async function handler (request, reply) {
-    const { displayName } = request.body
-    console.log(displayName)
+    const { display_name: displayName } = request.body
 
     const classRoom = await fastify.prisma.classRoom.findUnique({
       where: {
@@ -18,7 +17,7 @@ export default async function (fastify) {
 
     if (classRoom) throw fastify.httpErrors.conflict('ClassRoom already exists')
 
-    await fastify.prisma.classRoom.create({
+    fastify.prisma.classRoom.create({
       data: {
         display_name: displayName
       }

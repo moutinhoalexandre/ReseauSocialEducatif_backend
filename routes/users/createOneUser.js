@@ -69,7 +69,7 @@ export default async function (fastify) {
 
     const hash = await fastify.bcrypt.hash(password)
 
-    await fastify.prisma.user.create({
+    const newUser = await fastify.prisma.user.create({
       data: {
         email: email,
         display_name: displayName,
@@ -78,24 +78,24 @@ export default async function (fastify) {
       }
     })
 
-    // const returnedUser = {
-    //   id: newUser.id,
-    //   displayName: newUser.display_name,
-    //   email: newUser.email,
-    //   role: newUser.role,
-    //   profileImageUrl: newUser.profile_image_url
-    // }
+    const returnedUser = {
+      id: newUser.id,
+      displayName: newUser.display_name,
+      email: newUser.email,
+      role: newUser.role,
+      profileImageUrl: newUser.profile_image_url
+    }
 
-    // reply
-    //   .setCookie('connectedUser', JSON.stringify(returnedUser), {
-    //     domain: 'localhost',
-    //     path: '/',
-    //     secure: true,
-    //     httpOnly: false,
-    //     sameSite: true
-    //   })
-    //   .code(200)
-    //   .send(returnedUser)
+    reply
+      .setCookie('connectedUser', JSON.stringify(returnedUser), {
+        domain: 'localhost',
+        path: '/',
+        secure: true,
+        httpOnly: false,
+        sameSite: true
+      })
+      .code(200)
+      .send(returnedUser)
   }
 }
 
